@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="password"], input[type="email"] {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .message.success {
+            color: #007BFF;
+        }
+        .message.danger {
+            color: #dc3545;
+        }
+        .return-to-login {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .return-to-login a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Signup</h2>
+        <form method="POST" onsubmit="return validateForm()">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" required>
+            
+            <label for="email">Email:</label>
+            <input type="email" name="email" id="email" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
+            <label for="show-password">
+                <input type="checkbox" id="show-password"> Show Password
+            </label>
+            
+            <button type="submit">Sign Up</button>
+        </form>
+        <div class="message">
+            <div class="message">
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message[1] }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+        </div>
+        
+        <div class="return-to-login">
+            <p>Already have an account? <a href="{{ url_for('login') }}">Return to Login</a></p>
+        </div>
+    </div>
+    <script>
+        // Function to toggle password visibility
+        function togglePasswordVisibility() {
+            var passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        }
+    
+        // Attach an event listener to the "Show Password" checkbox
+        document.getElementById('show-password').addEventListener('click', togglePasswordVisibility);
+    </script>
+    
+    <script>
+        // Function to hide flash messages after 4 seconds
+        setTimeout(function() {
+            var messages = document.querySelectorAll('.message .alert');
+            messages.forEach(function(message) {
+                message.style.display = 'none';
+            });
+        }, 4000);
+
+        function sanitizeInput(input) {
+            return input.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function validateForm() {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            var email = document.getElementById('email').value;
+    
+            // Check for script tags in username, password, and email
+            if (/\<script\>/i.test(username) || /\<script\>/i.test(password) || /\<script\>/i.test(email)) {
+                alert('Script tags are not allowed in username, password, or email.');
+                return false;
+            }
+            
+            // Check for suspicious characters in username, password, and email
+            if (/['";]/.test(username) || /['";]/.test(password) || /['";]/.test(email)) {
+                alert('Invalid characters in username, password, or email.');
+                return false;
+            }
+
+            // Check password with the regex pattern
+            var regexPattern = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/;
+            if (!regexPattern.test(password)) {
+                alert('Password must meet the following criteria:\n- At least 8 characters\n- At least one uppercase letter\n- At least one lowercase letter\n- At least one digit');
+                return false;
+            }
+
+            // Sanitize user inputs
+            username = sanitizeInput(username);
+            password = sanitizeInput(password);
+            email = sanitizeInput(email);
+
+            // Update the input fields with sanitized values
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+            document.getElementById('email').value = email;
+            
+            return true;
+        }
+    </script>
+</body>
+</html>

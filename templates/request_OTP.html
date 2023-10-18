@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request OTP</title>
+    <!-- Include any necessary CSS styles here -->
+    <style>
+        .message {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .message.success {
+            color: #007BFF;
+        }
+        .message.danger {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Request OTP</h2>
+        <form method="POST" action="/request_otp">
+            <label for="username">Enter your username:</label>
+            <input type="text" name="username" id="username" required>
+            <button type="submit">Request OTP</button>
+        </form>
+        <div class="message">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message[1] }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+    <script>
+        // Function to hide flash messages after 4 seconds
+        setTimeout(function() {
+            var messages = document.querySelectorAll('.message .alert');
+            messages.forEach(function(message) {
+                message.style.display = 'none';
+            });
+        }, 4000); // Adjust the time (in milliseconds) as needed
+    </script>
+</body>
+</html>

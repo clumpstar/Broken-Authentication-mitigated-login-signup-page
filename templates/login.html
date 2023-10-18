@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .message.success {
+            color: #007BFF;
+        }
+        .message.danger {
+            color: #dc3545;
+        }
+        .signup-button {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .signup-button a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+        .request-otp-button {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .request-otp-button button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .request-otp-button button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Login</h2>
+        <form method="POST">
+            <label for="username">Username:</label>
+            <input type="text" name="username" id="username" required>
+            
+            <label for="password">Password:</label>
+            <input type="password" name="password" id="password" required>
+            <label for="show-password">
+                <input type="checkbox" id="show-password"> Show Password
+            </label>
+            
+            
+            <button type="submit">Sign In</button>
+        </form>
+        <div class="message">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message[1] }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+        <!-- {% if show_request_otp_button %}
+            <div class="request-otp-button">
+                <form action="{{ url_for('user_checking') }}" method="POST">
+                    <button type="submit">Request an OTP</button>
+                </form>
+            </div>
+        {% endif %} -->
+        <div class="forgot-password-button">
+            <form method="POST" action="/user-checking">
+                <p>Forgot your password? <button>Reset it here</button></p>
+            </form>
+            
+        </div>
+        <div class="signup-button">
+            <p>Don't have an account? <a href="{{ url_for('signup') }}">Sign up here</a></p>
+        </div>
+    </div>
+    <script>
+        // Function to toggle password visibility
+        function togglePasswordVisibility() {
+            var passwordInput = document.getElementById('password');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+            } else {
+                passwordInput.type = 'password';
+            }
+        }
+    
+        // Attach an event listener to the "Show Password" checkbox
+        document.getElementById('show-password').addEventListener('click', togglePasswordVisibility);
+    </script>
+    
+    <script>
+        // Function to hide flash messages after 4 seconds
+        setTimeout(function() {
+            var messages = document.querySelectorAll('.message .alert');
+            messages.forEach(function(message) {
+                message.style.display = 'none';
+            });
+        }, 4000); // Adjust the time (in milliseconds) as needed
+    </script>
+    <script>
+        // Function to hide flash messages after 4 seconds
+        setTimeout(function() {
+            var messages = document.querySelectorAll('.request-otp-button button');
+            messages.forEach(function(message) {
+                message.style.display = 'none';
+            });
+        }, 10000); // Adjust the time (in milliseconds) as needed
+    </script>
+    <script>
+        function sanitizeInput(input) {
+            // Remove potentially dangerous characters and HTML tags
+            return input.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+    
+        function validateLoginForm() {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+    
+            // Check for script tags in username and password
+            if (/\<script\>/i.test(username) || /\<script\>/i.test(password)) {
+                alert('Script tags are not allowed in username or password.');
+                return false;
+            }
+            
+            // Check for suspicious characters in username and password
+            if (/['";]/.test(username) || /['";]/.test(password)) {
+            alert('Invalid characters in username or password.');
+            return false;
+        }
+        validateLoginForm();
+    
+            // Sanitize user inputs
+            username = sanitizeInput(username);
+            password = sanitizeInput(password);
+    
+            // Update the input fields with sanitized values
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+    
+            return true;
+        }
+    </script>
+    
+</body>
+</html>
