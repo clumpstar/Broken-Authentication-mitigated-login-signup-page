@@ -1,0 +1,5 @@
+.env
+
+data
+migrations
+__pycache__

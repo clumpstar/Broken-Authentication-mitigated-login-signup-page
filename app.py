@@ -11,19 +11,22 @@ from flask_mail import Mail, Message
 from flask_wtf.csrf import CSRFProtect
 import string
 import secrets
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_secret_key'
 project_folder = os.path.dirname(os.path.abspath(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = "<your db link i used supabase postgres so the db actions will be according to it>"
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SUPABASE_URI')
 
 # Flask-Mail Configuration
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'  # Use your email provider's SMTP server
-app.config['MAIL_PORT'] = 465  # Use the appropriate port for your email provider
-app.config['MAIL_USERNAME'] = '<your sender email>'  # Your email address
-app.config['MAIL_PASSWORD'] = '<your email password>'  # Your email password
-app.config['MAIL_USE_TLS'] = False  # Use TLS for security
-app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_SERVER'] = 'smtp.googlemail.com'  # Use your email provider's SMTP server
+app.config['MAIL_PORT'] = 587  # Use the appropriate port for your email provider
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')  # Your email address
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')  # Your email password
+app.config['MAIL_USE_TLS'] = True  # Use TLS for security
+app.config['MAIL_USE_SSL'] = False
 
 db = SQLAlchemy(app)
 mail = Mail(app)
@@ -84,7 +87,7 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         user = USER.query.filter_by(username=username).first()
-        print(user.id,user.password,bcrypt.check_password_hash(user.password, password))
+        # print(user.id,user.password,bcrypt.check_password_hash(user.password, password))
 
         if user and bcrypt.check_password_hash(user.password, password):
             # Reset login attempts on successful login
